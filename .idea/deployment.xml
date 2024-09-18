@@ -1,8 +1,15 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
-  <component name="PublishConfigData" autoUpload="Always" serverName="sanay@192.168.140.115:22" remoteFilesAllowedToDisappearOnAutoupload="false">
+  <component name="PublishConfigData" autoUpload="Always" serverName="192.168.140.140" remoteFilesAllowedToDisappearOnAutoupload="false">
     <serverData>
-      <paths name="sanay@192.168.140.115:22">
+      <paths name="192.168.140.140">
+        <serverdata>
+          <mappings>
+            <mapping deploy="/home/sanay/crm" local="$PROJECT_DIR$" web="/" />
+          </mappings>
+        </serverdata>
+      </paths>
+      <paths name="sanay@192.168.140.140:22">
         <serverdata>
           <mappings>
             <mapping deploy="/home/sanay/crm" local="$PROJECT_DIR$" web="/" />

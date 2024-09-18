@@ -9,7 +9,8 @@ const routes: Routes = [
     component: PanelComponent,
     children: [
       //{ path: '', component: PanelComponent },
-      { path: 'tickets', loadChildren: () => import('./tickets/tickets.module').then(m => m.TicketsModule) }
+      { path: 'tickets', loadChildren: () => import('./tickets/tickets.module').then(m => m.TicketsModule) },
+      { path: 'dashboard', loadChildren: () => import('./dashboard/dashboard.module').then(m => m.DashboardModule) }
     ]
   },
 ];

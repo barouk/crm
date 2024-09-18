@@ -1,10 +1,8 @@
 <div class="sidebar">
     <h2>منوی داشبورد</h2>
     <ul>
-        <li><a href="#">داشبورد</a></li>
-        <li><a href="#">کاربران</a></li>
-        <li><a href="#">گزارشات</a></li>
-        <li><a href="#">تنظیمات</a></li>
+        <li><a href="/panel/dashboard/">داشبورد</a></li>
+        <li><a href="/panel/tickets/">درخواست ها</a></li>
     </ul>
 </div>
 
@@ -12,25 +10,11 @@
     <header>
         <h1>داشبورد مدیریتی</h1>
         <div class="user-info">
-            <span>خوش آمدید، مدیر</span>
+            <span> {{username}},خوش آمدید </span>
         </div>
     </header>
 
     <router-outlet></router-outlet>
 
 
-    <section class="cards">
-        <div class="card">
-            <h3>تعداد کاربران</h3>
-            <p>1500</p>
-        </div>
-        <div class="card">
-            <h3>گزارشات</h3>
-            <p>35</p>
-        </div>
-        <div class="card">
-            <h3>درآمد</h3>
-            <p>$5000</p>
-        </div>
-    </section>
 </div>

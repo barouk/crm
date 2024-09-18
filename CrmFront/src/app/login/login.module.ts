@@ -4,8 +4,11 @@ import { FormsModule } from '@angular/forms';
 import { ReactiveFormsModule } from '@angular/forms';
 import { LoginRoutingModule } from './login-routing.module';
 import { LoginComponent } from './login.component';
-
-
+import { HttpClientModule } from '@angular/common/http';
+import { BrowserModule } from '@angular/platform-browser';
+import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
+import { NzMessageModule } from 'ng-zorro-antd/message';
+import { NzIconModule } from 'ng-zorro-antd/icon';
 
 
 
@@ -15,6 +18,11 @@ import { LoginComponent } from './login.component';
         FormsModule,
         ReactiveFormsModule,
         LoginRoutingModule,
+        NzMessageModule,
+        NzIconModule,
+        
+        
+        
     ],
   declarations: [LoginComponent],
   exports: [LoginComponent]
