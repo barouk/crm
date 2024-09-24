@@ -3,7 +3,7 @@ import { FormBuilder, FormControl, FormGroup } from '@angular/forms';
 import { webSocket, WebSocketSubject } from 'rxjs/webSocket';
 import { environment } from 'src/environments/environment';
 import { Observable } from 'rxjs';
-
+import { ChangeDetectorRef } from '@angular/core';
 
 @Component({
   selector: 'app-home',
@@ -23,7 +23,7 @@ export class HomeComponent {
   })
   
 
-  constructor(private formBuilder: FormBuilder){}
+  constructor(private formBuilder: FormBuilder,private cdr: ChangeDetectorRef){}
 
   openChat() {
    
@@ -38,13 +38,12 @@ export class HomeComponent {
         }).subscribe( 
           (message :any) => {
 
-            let x= JSON.parse(message)
-
-            console.log(x)
+            let x= JSON.parse(message)    
             for (var i = 0; i < x.messages.length; i++) {
-              let y = {"user":x.messages[i].user , "message":x.messages[i].message }
               
-              this.messagess.push(y)  
+              let y = {"user":x.messages[i].user , "message":x.messages[i].message }
+              console.log("99999")
+              this.messagess =[...this.messagess , y]
           }    
 
           },
@@ -68,29 +67,15 @@ export class HomeComponent {
         }).subscribe( 
           (message :any) => {
             let x= JSON.parse(message)
-            
-            console.log(x)
-
-            let y = {"user":x.user , "message":x.message }
-            this.messagess.push(y)  
+            for (var i = 0; i < x.messages.length; i++) { 
+              let y = {"user":x.messages[i].user , "message":x.messages[i].message }
+              this.messagess =[...this.messagess , y]
+          }    
           },
           (error) => {}
          )
-
-
-         let y = {"user":"user" , "message":this.form.value.message }
-         this.messagess.push(y)
          this.form.reset()
       console.log(this.form.value.message)
     }
-
-
-
-    
-
-
-  
   }
-
-  
 }

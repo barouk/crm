@@ -1,1 +1,21 @@
-<p>tickets works!</p>
+<table class="styled-table">
+    <thead>
+        <tr>
+            <th>عملیات</th>
+            <th>شماره سریال</th>
+            <th>ایمیل</th>
+            <th>ردیف</th>
+
+        </tr>
+    </thead>
+    <tbody>
+        <tr *ngFor="let ticket of ticket_list; index as i">
+              <td> <a>بستن چت</a> /  <a [attr.href]="'/panel/ticket/detail/' + ticket['email']+'/'+ticket['chat_id']  ">گفتگو</a>     </td>  
+
+              <td>{{ticket['chat_id']}}</td>
+              <td>{{ticket['email']}}</td>
+              <td>{{i+1}}</td>
+        </tr>
+       
+    </tbody>
+</table>
