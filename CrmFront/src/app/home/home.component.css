@@ -286,4 +286,14 @@ nav ul li a {
     
   }
 
-  
+  .user-p{
+    text-align: right;
+    color: blue;
+  }
+
+
+
+  .admin-p{
+    text-align: left;
+    color: rgb(54, 54, 54);
+  }

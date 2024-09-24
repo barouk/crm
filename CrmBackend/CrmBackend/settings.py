@@ -31,13 +31,18 @@ ALLOWED_HOSTS = ["*"]
 # Application definition
 
 INSTALLED_APPS = [
+    'daphne',
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-    'rest_framework'
+    'rest_framework',
+    'chat',
+    'channels',
+    'corsheaders'
+
 ]
 
 MIDDLEWARE = [
@@ -70,7 +75,7 @@ TEMPLATES = [
 ]
 
 WSGI_APPLICATION = 'CrmBackend.wsgi.application'
-
+ASGI_APPLICATION = 'CrmBackend.asgi.application'
 
 # Database
 # https://docs.djangoproject.com/en/4.2/ref/settings/#databases
@@ -83,8 +88,30 @@ DATABASES = {
         'PASSWORD': 'ipmdbpass',
         'HOST':'localhost',
         'PORT':'3306',
+    },
+    'redis': {
+        'BACKEND': 'django_redis.cache.RedisCache',
+        'LOCATION': 'redis://127.0.0.1:6379/',  # Replace with your Redis server info
+        'OPTIONS': {
+            'CLIENT_CLASS': 'django_redis.client.DefaultClient',
+        }
     }
 }
+
+
+CACHES = {
+    'default': {
+        'BACKEND': 'django_redis.cache.RedisCache',
+        'LOCATION': 'redis://127.0.0.1:6379/1',
+        'OPTIONS': {
+            'CLIENT_CLASS': 'django_redis.client.DefaultClient',
+        }
+    }
+}
+
+CACHE_TTL = 60 * 60
+
+
 
 # Password validation
 # https://docs.djangoproject.com/en/4.2/ref/settings/#auth-password-validators
@@ -140,4 +167,10 @@ REST_FRAMEWORK = {
         #'CrmBackend.authentication.BasicAuthFromCookie'
         #'rest_framework.authentication.SessionAuthentication',
     ]
+}
+
+CHANNEL_LAYERS = {
+    "default": {
+        "BACKEND": "channels.layers.InMemoryChannelLayer"
+    }
 }
