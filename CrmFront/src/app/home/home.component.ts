@@ -75,7 +75,12 @@ export class HomeComponent {
           (error) => {}
          )
          this.form.reset()
-      console.log(this.form.value.message)
+         this.email_verify = true
     }
+      this.socket.send(JSON.stringify({ "message": this.form.value.message, }));
+      this.form.reset()
+    
+
+
   }
 }
