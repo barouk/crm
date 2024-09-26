@@ -1,70 +1,55 @@
+<section class="hero-section">
+    <h1>Make landing page fast and easily</h1>
+    <p>Create custom landing pages with Shades that convert more visitors than any website—no coding required.</p>
+    <div class="email-subscribe">
+        <input type="email" placeholder="Enter your email">
+        <button>Subscribe</button>
+    </div>
+    <div class="trusted-section">Trusted by over 50,000+ customers</div>
+</section>
+<section class="features">
+    <div class="feature">
+        <img src="https://via.placeholder.com/50" alt="Easy to Use">
+        <h3>Easy to Use</h3>
+        <p>Editing and customizing Essential Landing is easy and fast.</p>
+    </div>
+    <div class="feature">
+        <img src="https://via.placeholder.com/50" alt="100% Responsive">
+        <h3>100% Responsive</h3>
+        <p>Editing and customizing Essential Landing is easy and fast.</p>
+    </div>
+    <div class="feature">
+        <img src="https://via.placeholder.com/50" alt="New Pages">
+        <h3>50+ New Pages</h3>
+        <p>Editing and customizing Essential Landing is easy and fast.</p>
+    </div>
+</section>
+<button class="chat-button" (click)="openChat()">
+    Chat
+</button>
+<div class="chat-card" *ngIf="isChatOpen">
+    <div class="chat-header">
+        <button class="close-button" (click)="closeChat()">X</button>
+        <h3>پشتیبانی آنلاین</h3>
+    </div>
+    <div class="chat-content">
+        <p>خوش آمدید! لطفا برای شروع ایمیل خود را ارسال کنید</p>
+        <ul>
+            <li *ngFor="let message of messagess" class="li  ">
+                <div *ngIf="message.user =='user'" class="user-p">
+                    {{ message.message }}
+                </div>
 
+                <div *ngIf="message.user =='admin'" class="admin-p">
+                    {{ message.message }}
+                </div>
 
+            </li>
+        </ul>
+        <form [formGroup]="form" (ngSubmit)="send_message()">
+            <input type="text" placeholder="پیام خود را وارد کنید" class="input_chat" formControlName="message">
+            <button>ارسال</button>
+        </form>
 
-    <section class="hero-section">
-        <h1>Make landing page fast and easily</h1>
-        <p>Create custom landing pages with Shades that convert more visitors than any website—no coding required.</p>
-        <div class="email-subscribe">
-            <input type="email" placeholder="Enter your email">
-            <button>Subscribe</button>
-        </div>
-        <div class="trusted-section">Trusted by over 50,000+ customers</div>
-    </section>
-
-    <section class="features">
-        <div class="feature">
-            <img src="https://via.placeholder.com/50" alt="Easy to Use">
-            <h3>Easy to Use</h3>
-            <p>Editing and customizing Essential Landing is easy and fast.</p>
-        </div>
-        <div class="feature">
-            <img src="https://via.placeholder.com/50" alt="100% Responsive">
-            <h3>100% Responsive</h3>
-            <p>Editing and customizing Essential Landing is easy and fast.</p>
-        </div>
-        <div class="feature">
-            <img src="https://via.placeholder.com/50" alt="New Pages">
-            <h3>50+ New Pages</h3>
-            <p>Editing and customizing Essential Landing is easy and fast.</p>
-        </div>
-    </section>
-
-
-    <button class="chat-button" (click)="openChat()">
-      
-        Chat
-      </button>
-
-
-
-      <div class="chat-card" *ngIf="isChatOpen">
-  <div class="chat-header">
-    <button class="close-button" (click)="closeChat()">X</button>
-    <h3>پشتیبانی آنلاین</h3>
-    
-  </div>
-  <div class="chat-content">
-    <p>خوش آمدید! لطفا برای شروع ایمیل خود را ارسال کنید</p>
-
-    <ul>
-        <li *ngFor="let message of messagess" class="li  " > 
-            <div *ngIf="message.user =='user'" class="user-p">
-                {{ message.message }}
-            </div>
-
-            <div *ngIf="message.user =='admin'" class="admin-p">
-                {{ message.message }}
-            </div>
-          
-        </li>
-    </ul>
-
-
-
-    <form [formGroup]="form" (ngSubmit)="send_message()">
-        <input type="text" placeholder="پیام خود را وارد کنید" class="input_chat"   formControlName="message">
-        <button >ارسال</button>
-    </form>
-    
-  </div>
+    </div>
 </div>

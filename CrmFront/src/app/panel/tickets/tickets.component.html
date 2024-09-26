@@ -10,8 +10,7 @@
     </thead>
     <tbody>
         <tr *ngFor="let ticket of ticket_list; index as i">
-              <td> <a>بستن چت</a> /  <a [attr.href]="'/panel/ticket/detail/' + ticket['email']+'/'+ticket['chat_id']  ">گفتگو</a>     </td>  
-
+              <td> <a (click)="delete_ticket(ticket['email'])">بستن چت</a> /  <a [attr.href]="'/panel/ticket/detail/' + ticket['email']+'/'+ticket['chat_id']  ">گفتگو</a>     </td>  
               <td>{{ticket['chat_id']}}</td>
               <td>{{ticket['email']}}</td>
               <td>{{i+1}}</td>

@@ -13,6 +13,18 @@ export class TicketsComponent implements OnInit{
   public ticket_list = []
 
   constructor(){}
+  
+
+  delete_ticket(email:string){
+    return this.http.post(`${this.apiUrl}${this.endpoint}`, value).pipe(
+      tap((res: any) => {
+        this.loggedIn.next(true);
+        localStorage.setItem('refreshTokenDrs', res.refresh);
+        localStorage.setItem('accessTokenDrs', res.access);
+      })
+    );
+   
+  }
 
   ngOnInit(): void {
     
