@@ -2,9 +2,9 @@ import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { ReactiveFormsModule } from '@angular/forms';
-import { TicketsComponent } from './tickets.component';
-import { TicketsRoutingModule } from './tickets-routing.module';
+import { DetailMessagesRoutingModule } from './detail-messages-routing.module';
 import { NzMessageModule } from 'ng-zorro-antd/message';
+import { DetailMessagesComponent } from './detail-messages.component';
 
 
 
@@ -14,10 +14,10 @@ import { NzMessageModule } from 'ng-zorro-antd/message';
         CommonModule,
         FormsModule,
         ReactiveFormsModule,
-        TicketsRoutingModule,
+        DetailMessagesRoutingModule,
         NzMessageModule
     ],
-  declarations: [TicketsComponent],
-  exports: [TicketsComponent]
+  declarations: [DetailMessagesComponent],
+  exports: [DetailMessagesComponent]
 })
-export class TicketsModule { }
+export class DetailMessagesModule { }

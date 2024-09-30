@@ -9,6 +9,8 @@ import { DashboardComponent } from './dashboard/dashboard.component';
 import { JwtInterceptor } from '../interceptors/jwt.interceptor';
 import { HTTP_INTERCEPTORS, HttpClientModule } from '@angular/common/http';
 import { DetailTicketComponent } from './detail-ticket/detail-ticket.component';
+import { SavedRequestsComponent } from './saved-requests/saved-requests.component';
+import { DetailMessagesComponent } from './detail-messages/detail-messages.component';
 
 
 

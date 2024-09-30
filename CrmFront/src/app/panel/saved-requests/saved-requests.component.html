@@ -1,13 +1,15 @@
 
 <div *ngIf="!ticket_list.length" class="non-ticket">
     <h1>درخواستی وجود ندارد</h1> 
-    
 </div>
+
 <table class="styled-table" *ngIf="ticket_list.length">
     
     <thead>
         <tr>
             <th>عملیات</th>
+            <th>تعداد پیام ها</th>
+            <th>زمان</th>
             <th>شماره سریال</th>
             <th>ایمیل</th>
             <th>ردیف</th>
@@ -16,9 +18,11 @@
     </thead>
     <tbody>
         <tr *ngFor="let ticket of ticket_list; index as i">
-              <td> <a (click)="delete_ticket(ticket['email'])">بستن چت</a> /  <a [attr.href]="'/panel/ticket/detail/' + ticket['email']+'/'+ticket['chat_id']  ">گفتگو</a>     </td>  
+            <td><a  [attr.href]=" 'panel/detail/message/'+ticket['id']">مشاهده</a></td>  
+            <td>  {{ticket['message_count']}}    </td>  
+              <td>  {{ticket['input_date']}}    </td>  
               <td>{{ticket['chat_id']}}</td>
-              <td>{{ticket['email']}}</td>
+              <td>{{ticket['name']}}</td>
               <td>{{i+1}}</td>
         </tr>       
     </tbody>

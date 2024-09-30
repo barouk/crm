@@ -6,71 +6,98 @@ from . import models
 from urllib.parse import parse_qs
 import random
 import uuid
-from django.core.cache import cache
 import threading
 import json
 import time
+from . import r
 
+import uuid
+import json
+from channels.layers import get_channel_layer
+from asgiref.sync import async_to_sync
+from urllib.parse import parse_qs
 
 class ChatConsumer(WebsocketConsumer):
+
     def connect(self):
-        query_string = self.scope["query_string"].decode()
-        query_params = parse_qs(query_string)
-        email = query_params.get("email", None)[0]
-        if email is None:
-            return False
+        email = self._get_email()
+        if not email:
+            self.close()
+            return
 
-        redis_obj = cache.get(str(email))
-        if redis_obj is not None:
-
-            self.room_name = str(email)
-            self.room_group_name =redis_obj["chat_id"]
+        redis_obj = self._get_redis_obj(email)
+        if redis_obj:
+            self._join_existing_room(email, redis_obj)
         else:
-
-            chat_id = str(uuid.uuid4())
-            self.room_name = str(email)
-            self.room_group_name = chat_id
-            cache.set(str(email), {"email": str(email),
-                                   "chat_id":chat_id,
-                                   "messages": [{"message": "سلام چطور میتوانم به شما کمک کنم ؟", "user": "admin"}]},
-                      timeout=60 * 60)
+            self._create_new_room(email)
 
         async_to_sync(self.channel_layer.group_add)(self.room_group_name, self.channel_name)
         self.accept()
 
-        if redis_obj is  None:
-            self.send(text_data=json.dumps({"room_name": str(email),
-                                             "chat_id": cache.get(str(email)) is not None if cache.get(
-                                                 str(email)) is not None else chat_id,
-                                             "messages":[{"message": "سلام چطور میتوانم به شما کمک کنم ؟"}], "user": "admin"}))
-        else:
-            self.send(text_data=json.dumps(cache.get(str(email))))
+        # Send chat room info to the user
+        self._send_initial_message(redis_obj)
 
     def disconnect(self, close_code):
         async_to_sync(self.channel_layer.group_discard)(self.room_group_name, self.channel_name)
 
     def receive(self, text_data):
-        text_data_json = json.loads(text_data)
-        message = text_data_json["message"]
-        print(message)
-        print("*****")
-        redis_obj = cache.get(str(self.room_name))
-        redis_obj["messages"].append( {"message":message, "user": "user"})
-        cache.set(str(self.room_name) , redis_obj)
-        async_to_sync(self.channel_layer.group_send)(
-            self.room_group_name, { "type": "chat_message","messages":  [{ "message": message , "user":"user" } ] }
-        )
+        message = json.loads(text_data)["message"]
+        self._save_message_to_redis(message)
+        self._broadcast_message(message, "user")
 
     def chat_message(self, event):
         message = event["messages"][0]["message"]
         user = event["messages"][0]["user"]
+        self.send(text_data=json.dumps({"messages": [{"message": message, "user": user}]}))
 
-        # ارسال پیام به WebSocket
-        self.send(text_data=json.dumps({
-            "messages":[{
-            "message": message,
-            "user": user}]
-        }))
+    # Helper methods
+    def _get_email(self):
+        query_string = self.scope["query_string"].decode()
+        query_params = parse_qs(query_string)
+        return query_params.get("email", [None])[0]
+
+    def _get_redis_obj(self, email):
+        return r.get(str(email))
+
+    def _join_existing_room(self, email, redis_obj):
+        redis_data = json.loads(redis_obj)
+        self.room_name = email
+        self.room_group_name = redis_data["chat_id"]
+
+    def _create_new_room(self, email):
+        chat_id = str(uuid.uuid4())
+        self.room_name = email
+        self.room_group_name = chat_id
+        initial_message = {
+            "email": email,
+            "chat_id": chat_id,
+            "messages": [{"message": "سلام چطور میتوانم به شما کمک کنم ؟", "user": "admin"}]
+        }
+        r.set(email, json.dumps(initial_message), 20)
+
+    def _send_initial_message(self, redis_obj):
+        if redis_obj:
+            self.send(json.dumps(json.loads(redis_obj)))
+        else:
+            self.send(json.dumps({
+                "room_name": self.room_name,
+                "chat_id": self.room_group_name,
+                "messages": [{"message": "سلام چطور میتوانم به شما کمک کنم ؟", "user": "admin"}]
+            }))
+
+    def _save_message_to_redis(self, message):
+        redis_obj = json.loads(r.get(self.room_name))
+        redis_obj["messages"].append({"message": message, "user": "user"})
+        r.set(self.room_name, json.dumps(redis_obj),20)
+
+    def _broadcast_message(self, message, user):
+        async_to_sync(self.channel_layer.group_send)(
+            self.room_group_name, {
+                "type": "chat_message",
+                "messages": [{"message": message, "user": user}]
+            }
+        )
+
 
 
 
@@ -85,13 +112,21 @@ class AdminChatList(WebsocketConsumer):
 
     def send_message_every_10_seconds(self):
         while True:
-            redis_obj = cache.keys('*')
+            redis_obj = r.keys('*')
             data = []
             for i in redis_obj :
-                data.append(cache.get(i))
+                res = r.get(i)
+                data.append(json.loads(res))
             self.send(text_data=json.dumps(data))
             time.sleep(5)
 
+    def receive(self, text_data):
+        redis_obj = r.keys('*')
+        data = []
+        for i in redis_obj:
+            res = r.get(i)
+            data.append(json.loads(res))
+        self.send(text_data=json.dumps(data))
 
 
 class AdminChatConsumer(WebsocketConsumer):
@@ -99,19 +134,19 @@ class AdminChatConsumer(WebsocketConsumer):
         query_string = self.scope["query_string"].decode()
         query_params = parse_qs(query_string)
         email = query_params.get("email", None)[0]
-        print(email)
-        print(":Dddddddddddddddddddddddddd")
         if email is None:
             raise
-        redis_obj = cache.get(str(email))
+        redis_obj = r.get(str(email))
+
         if redis_obj is not None:
             self.room_name = str(email)
-            self.room_group_name = redis_obj["chat_id"]
+            self.room_group_name = json.loads(redis_obj)["chat_id"]
+
         else:
             raise
         async_to_sync(self.channel_layer.group_add)(self.room_group_name, self.channel_name)
         self.accept()
-        self.send(text_data=json.dumps(cache.get(str(email))))
+        self.send(text_data=json.dumps(json.loads(r.get(str(email)))))
 
 
     def disconnect(self, close_code):
@@ -120,9 +155,9 @@ class AdminChatConsumer(WebsocketConsumer):
     def receive(self, text_data):
         text_data_json = json.loads(text_data)
         message = text_data_json["message"]
-        redis_obj = cache.get(str(self.room_name))
+        redis_obj = json.loads(r.get(str(self.room_name)))
         redis_obj["messages"].append({"message": message, "user": "admin"})
-        cache.set(str(self.room_name), redis_obj)
+        r.set(str(self.room_name), json.dumps(redis_obj),20)
         async_to_sync(self.channel_layer.group_send)(
             self.room_group_name, {"type": "chat_message", "messages": [{"message": message, "user": "admin"}]}
         )

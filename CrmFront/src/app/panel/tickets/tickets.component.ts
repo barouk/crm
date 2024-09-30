@@ -1,6 +1,8 @@
 import { Component, OnInit } from '@angular/core';
 import { environment } from 'src/environments/environment';
 import { Observable } from 'rxjs';
+import {HttpClient} from '@angular/common/http';
+import { NzMessageService } from 'ng-zorro-antd/message';
 
 @Component({
   selector: 'app-tickets',
@@ -9,26 +11,29 @@ import { Observable } from 'rxjs';
 })
 export class TicketsComponent implements OnInit{
   private socket: WebSocket;
-  private apiUrl = environment.socketUrl;
+  private wsUrl = environment.socketUrl;
+  private apiUrl = environment.apiUrl;
   public ticket_list = []
 
-  constructor(){}
+  constructor(private httpClient: HttpClient,private message: NzMessageService,){}
   
 
   delete_ticket(email:string){
-    return this.http.post(`${this.apiUrl}${this.endpoint}`, value).pipe(
-      tap((res: any) => {
-        this.loggedIn.next(true);
-        localStorage.setItem('refreshTokenDrs', res.refresh);
-        localStorage.setItem('accessTokenDrs', res.access);
-      })
-    );
+    return this.httpClient.post(`${this.apiUrl}/api/v1/chat/delete/ticket/`, {"email":email}).subscribe((res: any) => {
+      
+      this.socket.send(JSON.stringify({ "message": ""}));
+      
+      this.message.create('success', `با موفقیت حذف شد`);
+    }, (error:any) => {
+      this.message.create('error', `خطا در حذف`);
+    });
+    
    
   }
 
   ngOnInit(): void {
     
-    this.socket = new WebSocket(`ws://${this.apiUrl}/ws/admin/list/`);
+    this.socket = new WebSocket(`ws://${this.wsUrl}/ws/admin/list/`);
     new Observable(observer => {
       this.socket.onmessage = (event) => observer.next(event.data);
       this.socket.onerror = (event) => observer.error(event);

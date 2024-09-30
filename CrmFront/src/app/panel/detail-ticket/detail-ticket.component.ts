@@ -55,7 +55,6 @@ export class DetailTicketComponent implements OnInit {
 
 
   send_message() {
-    console.log(this.form.value)
     this.socket.send(JSON.stringify({ "message": this.form.value.message, }));
     this.form.reset()
   }
