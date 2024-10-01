@@ -23,7 +23,7 @@ export class TicketsComponent implements OnInit{
       
       this.socket.send(JSON.stringify({ "message": ""}));
       
-      this.message.create('success', `با موفقیت حذف شد`);
+      this.message.create('success', `با موفقیت بسته شد`);
     }, (error:any) => {
       this.message.create('error', `خطا در حذف`);
     });

@@ -1,11 +1,8 @@
 <section class="hero-section">
-    <h1>Make landing page fast and easily</h1>
-    <p>Create custom landing pages with Shades that convert more visitors than any website—no coding required.</p>
-    <div class="email-subscribe">
-        <input type="email" placeholder="Enter your email">
-        <button>Subscribe</button>
-    </div>
-    <div class="trusted-section">Trusted by over 50,000+ customers</div>
+    <h1>درخواست پشتیبانی انلاین</h1>
+    <p>بریا شروع پشتیبانی  دکمه  پایین سمت راست را بزنید و شروع به گفتگو کنید.</p>
+ 
+    <div class="trusted-section">برای  پنل ادمین به صفحه  /panel بروید</div>
 </section>
 <section class="features">
     <div class="feature">
@@ -30,10 +27,13 @@
 <div class="chat-card" *ngIf="isChatOpen">
     <div class="chat-header">
         <button class="close-button" (click)="closeChat()">X</button>
-        <h3>پشتیبانی آنلاین</h3>
+        <h2>پشتیبانی آنلاین</h2>
+        
+       
     </div>
     <div class="chat-content">
-        <p>خوش آمدید! لطفا برای شروع ایمیل خود را ارسال کنید</p>
+        <div   *ngIf="email_verify"  class="red_color">خوش آمدید! لطفا برای شروع ایمیل خود را ارسال کنید</div>
+        
         <ul>
             <li *ngFor="let message of messagess" class="li  ">
                 <div *ngIf="message.user =='user'" class="user-p">

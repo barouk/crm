@@ -13,7 +13,9 @@ from datetime import datetime,timedelta
 import jdatetime
 from django.db.models import Count
 from django.shortcuts import get_object_or_404
-
+import json
+from channels.layers import get_channel_layer
+from asgiref.sync import async_to_sync
 
 User =  get_user_model()
 
@@ -22,6 +24,17 @@ class Ticket(viewsets.ViewSet):
     def create(self, request, *args, **kwargs):
         serializer = serializers.DeleteTicketSerializer(data=request.data)
         serializer.is_valid(raise_exception=True)
+        data = json.loads(r.get(serializer.validated_data['email']).decode('utf-8'))
+
+        models.Ticket.objects.create(name = serializer.validated_data['email'] , chat_id = data['chat_id'] ,messages =data['messages']  )
+        channel_layer = get_channel_layer()
+        async_to_sync(channel_layer.group_send)(
+           data['chat_id'],
+            {
+                'type': 'defer',
+               'message': 'defer'
+            }
+        )
         r.delete(serializer.validated_data['email'])
         return Response("با موفقیت حذف شد")
 
