@@ -32,7 +32,7 @@
        
     </div>
     <div class="chat-content">
-        <div   *ngIf="!email_verify"  class="red_color">خوش آمدید! لطفا برای شروع ایمیل خود را ارسال کنید</div>
+        <div   *ngIf="email_verify"  class="red_color">خوش آمدید! لطفا برای شروع ایمیل خود را ارسال کنید</div>
         
         <ul>
             <li *ngFor="let message of messagess" class="li  ">
@@ -46,10 +46,11 @@
 
             </li>
         </ul>
-        <form [formGroup]="form" (ngSubmit)="send_message()">
+        <form (ngSubmit)="send_message()">
             <input type="text" placeholder="پیام خود را وارد کنید" class="input_chat" formControlName="message">
             <button>ارسال</button>
         </form>
 
+        
     </div>
 </div>

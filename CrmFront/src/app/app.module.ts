@@ -13,6 +13,7 @@ import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { HttpErrorInterceptor } from './interceptors/http-error-interceptor';
 import { NzMessageModule } from 'ng-zorro-antd/message';
 import { JwtInterceptor } from './interceptors/jwt.interceptor';
+import { HomeFrameComponent } from './home-frame/home-frame.component';
 
 registerLocaleData(fa);
 
