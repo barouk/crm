@@ -91,7 +91,7 @@ DATABASES = {
         'NAME': 'Crm',
         'USER': 'admin',
         'PASSWORD': '111111',
-        'HOST':os.getenv("MYSQL", default="mysql"),
+        'HOST':os.getenv("MYSQL"),
         'PORT':'3306',
     }
 }
