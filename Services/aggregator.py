@@ -8,14 +8,14 @@ from datetime import datetime,timedelta
 
 # اتصال به دیتابیس
 db = mysql.connector.connect(
-    host="localhost",
-    user="root",
-    password="ipmdbpass",
+    host="mysql",
+    user="admin",
+    password="111111",
     database="Crm"
 )
 cursorr = db.cursor()
 
-r = redis.StrictRedis(host='localhost', port=6379, db=0)
+r = redis.StrictRedis(host='redis', port=6379, db=0)
 
 def check_keys_before_expire():
     cursor = 0

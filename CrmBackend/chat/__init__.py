@@ -1,3 +1,5 @@
 import redis
+import os
 
-r = redis.StrictRedis(host='localhost', port=6379, db=0)
+
+r = redis.StrictRedis(host=os.getenv("REDIS", default="redis"), port=6379, db=0)
