@@ -4,9 +4,10 @@ COPY package*.json ./
 RUN npm install
 COPY . .
 RUN npm run build --prod
-
+EXPOSE 4200
 
 FROM nginx:alpine
-COPY --from=build /app/dist/your-angular-app-name /usr/share/nginx/html
+COPY --from=build /app/dist/uni-proj-alireza-bgh /usr/share/nginx/html
 EXPOSE 80
+
 CMD ["nginx", "-g", "daemon off;"]

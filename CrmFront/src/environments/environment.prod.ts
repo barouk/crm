@@ -1,5 +1,5 @@
 export const environment = {
   production: true,
-  apiUrl: 'http://nginx/api/',
-  wsUrl: 'ws://nginx/ws/'
+  apiUrl: 'http://127.0.0.1',
+  socketUrl: 'ws://127.0.0.1'
 };
