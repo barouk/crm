@@ -50,16 +50,14 @@ export class HomeComponent {
         this.socket.onerror = (event) => observer.error(event);
         this.socket.onclose = () => observer.complete();
       }).subscribe(
-        (message: any) => {
-         
-
+        (message: any) => {         
           let x = JSON.parse(message)
-          if (x.hasOwnProperty('message') && x['message'] === 'defer') {
+          if (x.hasOwnProperty('message') && x['message']['message'] === 'defer') {
             this.defer()
           }
           if (x.hasOwnProperty('messages')) {
             for (var i = 0; i < x.messages.length; i++) {
-              let y = { "user": x.messages[i].user, "message": x.messages[i].message }
+              let y = { "user": x.messages[i].user, "message": x.messages[i].message , "timestamp": x.messages[i].timestamp }
               this.messagess = [...this.messagess, y]
             }
           }
@@ -106,7 +104,7 @@ export class HomeComponent {
           }
           if (x.hasOwnProperty('messages')) {
             for (var i = 0; i < x.messages.length; i++) {
-              let y = { "user": x.messages[i].user, "message": x.messages[i].message }
+              let y = { "user": x.messages[i].user, "message": x.messages[i].message,"timestamp": x.messages[i].timestamp }
               this.messagess = [...this.messagess, y]
             }
           }
@@ -121,9 +119,8 @@ export class HomeComponent {
 
 
     }
+    else{
     
-
-  
       for (const i in this.form.controls) {
         if (this.form.controls.hasOwnProperty(i)) {
           this.form.controls[i].markAsDirty();
@@ -138,5 +135,5 @@ export class HomeComponent {
     this.form.reset()
 
 
-  }
+  }}
 }

@@ -44,7 +44,7 @@ export class DetailTicketComponent implements OnInit {
           console.log(x)
           for (var i = 0; i < x.messages.length; i++) {
             
-            let y = {"user":x.messages[i].user , "message":x.messages[i].message }
+            let y = {"user":x.messages[i].user , "message":x.messages[i].message,"timestamp": x.messages[i].timestamp }
             this.messagess =[...this.messagess , y]
         }    
 

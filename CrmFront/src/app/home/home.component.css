@@ -301,3 +301,8 @@ nav ul li a {
     color: rgb(94, 80, 117);
     text-align: center;
   }
+
+  .messages_ul{
+    overflow-y: scroll;
+    max-height: 350px;
+  }

@@ -34,14 +34,14 @@
     <div class="chat-content">
         <div   *ngIf="!email_verify"  class="red_color">خوش آمدید! لطفا برای شروع ایمیل خود را ارسال کنید</div>
         
-        <ul>
+        <ul class="messages_ul">
             <li *ngFor="let message of messagess" class="li  ">
                 <div *ngIf="message.user =='user'" class="user-p">
-                    {{ message.message }}
+                    {{ message.message }}  <p>{{ message.timestamp }}</p>
                 </div>
 
                 <div *ngIf="message.user =='admin'" class="admin-p">
-                    {{ message.message }}
+                    {{ message.message }} <p>{{ message.timestamp }}</p>
                 </div>
 
             </li>
