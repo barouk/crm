@@ -1,10 +1,10 @@
 import { Component } from '@angular/core';
-import { FormBuilder, FormControl, FormGroup ,Validators } from '@angular/forms';
-import { webSocket, WebSocketSubject } from 'rxjs/webSocket';
-import { environment } from 'src/environments/environment';
+import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { Observable } from 'rxjs';
+import { environment } from 'src/environments/environment';
 import { ChangeDetectorRef } from '@angular/core';
 import { NzMessageService } from 'ng-zorro-antd/message';
+import { CookieService } from 'ngx-cookie-service';
 
 @Component({
   selector: 'app-home',
@@ -13,127 +13,122 @@ import { NzMessageService } from 'ng-zorro-antd/message';
 })
 export class HomeComponent {
   isChatOpen = false;
-  email_verify = false
+  email_verify = false;
   private socket: WebSocket;
   private apiUrl = environment.socketUrl;
-  public messagess: any = []
+  public messagess: any[] = [];
 
   form: FormGroup = this.formBuilder.group({
-    "message":['', [Validators.required,Validators.email]]
-  })
+    "message": ['', [Validators.required, Validators.email]]
+  });
 
+  constructor(
+    private formBuilder: FormBuilder,
+    private cdr: ChangeDetectorRef,
+    private message: NzMessageService,
+    private cookieService: CookieService // اضافه کردن CookieService
+  ) {}
 
-  defer() {
-    localStorage.removeItem('room_name');
-    this.messagess=[]
-    this.email_verify = false
-    this.socket.close();
-    this.openChat()
+  private createWebSocket(email: string): Observable<any> {
+    this.socket = new WebSocket(`ws://${this.apiUrl}/ws/chat/?email=${email}`);
+    return new Observable(observer => {
+      this.socket.onmessage = (event) => observer.next(event.data);
+      this.socket.onerror = (event) => observer.error(event);
+      this.socket.onclose = () => observer.complete();
+    });
   }
 
-  constructor(private formBuilder: FormBuilder, private cdr: ChangeDetectorRef,private message: NzMessageService) { }
-
-  openChat() {
-    if (this.isChatOpen) {
-      return
+  private handleMessage(message: any): void {
+    const parsedMessage = JSON.parse(message);
+    if (parsedMessage.message?.message === 'defer') {
+      this.defer();
     }
+    if (parsedMessage.messages) {
+      parsedMessage.messages.forEach((msg: any) => {
+        this.messagess.push({
+          user: msg.user,
+          message: msg.message,
+          timestamp: msg.timestamp
+        });
+      });
+    }
+  }
 
-    const token = localStorage.getItem('room_name');
-    if (token != null ) {
-      this.form = this.formBuilder.group({
-        "message":['', Validators.required]
-      })
-      this.email_verify = true
-      this.socket = new WebSocket(`ws://${this.apiUrl}/ws/chat/?email=${token}`);
-      new Observable(observer => {
-        this.socket.onmessage = (event) => observer.next(event.data);
-        this.socket.onerror = (event) => observer.error(event);
-        this.socket.onclose = () => observer.complete();
-      }).subscribe(
-        (message: any) => {         
-          let x = JSON.parse(message)
-          if (x.hasOwnProperty('message') && x['message']['message'] === 'defer') {
-            this.defer()
-          }
-          if (x.hasOwnProperty('messages')) {
-            for (var i = 0; i < x.messages.length; i++) {
-              let y = { "user": x.messages[i].user, "message": x.messages[i].message , "timestamp": x.messages[i].timestamp }
-              this.messagess = [...this.messagess, y]
-            }
-          }
+  private resetForm(validators: any[]): void {
+    this.form = this.formBuilder.group({
+      "message": ['', validators]
+    });
+    this.form.reset();
+  }
 
+  private markFormControlsAsDirty(): void {
+    Object.keys(this.form.controls).forEach(key => {
+      const control = this.form.controls[key];
+      control.markAsDirty();
+      control.updateValueAndValidity();
+    });
+  }
 
-        },
-        (error) => { }
-      )
+  defer(): void {
+    this.cookieService.delete('room_name'); 
+    this.messagess = [];
+    this.email_verify = false;
+    this.socket?.close();
+    this.openChat();
+  }
+
+  openChat(): void {
+    if (this.isChatOpen) return;
+
+    const token = this.cookieService.get('room_name'); 
+    if (token) {
+      this.resetForm([Validators.required]);
+      this.email_verify = true;
+      this.createWebSocket(token).subscribe(
+        (message) => this.handleMessage(message),
+        () => {},
+      );
     }
     this.isChatOpen = true;
   }
 
-  closeChat() {
+  closeChat(): void {
     this.isChatOpen = false;
-    this.messagess = []
+    this.messagess = [];
   }
 
-  send_message() {
+  send_message(): void {
     if (!this.email_verify) {
-      for (const i in this.form.controls) {
-        if (this.form.controls.hasOwnProperty(i)) {
-          this.form.controls[i].markAsDirty();
-          this.form.controls[i].updateValueAndValidity();
-        }
-      }
-      if (!this.form?.valid) {
+      this.markFormControlsAsDirty();
+      if (!this.form.valid) {
         this.message.create('error', `ایمیل درست نیست`);
-        return
+        return;
       }
-
-   
-      this.socket = new WebSocket(`ws://${this.apiUrl}/ws/chat/?email=${this.form.value.message}`);
-      localStorage.setItem('room_name', this.form.value.message);
-      new Observable(observer => {
-        this.socket.onmessage = (event) => observer.next(event.data);
-        this.socket.onerror = (event) => observer.error(event);
-        this.socket.onclose = () => observer.complete();
-      }).subscribe(
-        (message: any) => {
-          console.log(message)
-          let x = JSON.parse(message)
-          if (x.hasOwnProperty('message') && x['message'] === 'defer') {
-            this.defer()
-          }
-          if (x.hasOwnProperty('messages')) {
-            for (var i = 0; i < x.messages.length; i++) {
-              let y = { "user": x.messages[i].user, "message": x.messages[i].message,"timestamp": x.messages[i].timestamp }
-              this.messagess = [...this.messagess, y]
-            }
-          }
-        },
-        (error) => { }
-      )
-      this.form = this.formBuilder.group({
-        "message":['', Validators.required]
-      })
-      this.form.reset()
-      this.email_verify = true
-
-
-    }
-    else{
-    
-      for (const i in this.form.controls) {
-        if (this.form.controls.hasOwnProperty(i)) {
-          this.form.controls[i].markAsDirty();
-          this.form.controls[i].updateValueAndValidity();
-        }
-      }
-      if (!this.form?.valid) {
+      const email = this.form.value.message;
+      const expirationMinutes = 60; 
+      const expirationDate = new Date(new Date().getTime() + expirationMinutes * 60 * 1000); 
+      this.cookieService.set('room_name', email, expirationDate); 
+      this.createWebSocket(email).subscribe(
+        (message) => this.handleMessage(message),
+        () => {}
+      );
+      this.resetForm([Validators.required]);
+      this.email_verify = true;
+    } else {
+      this.markFormControlsAsDirty();
+      if (!this.form.valid) {
         this.message.create('error', `لطفا پیامی وارد کنید`);
-        return
+        return;
       }
-    this.socket.send(JSON.stringify({ "message": this.form.value.message, }));
-    this.form.reset()
 
+      
+      const expirationMinutes = 60; 
+      const expirationDate = new Date(new Date().getTime() + expirationMinutes * 60 * 1000); 
+      const email = this.cookieService.get('room_name'); 
+      this.cookieService.set('room_name', email, expirationDate); 
 
-  }}
+      this.socket.send(JSON.stringify({ message: this.form.value.message }));
+      this.form.reset();
+    }
+  }
 }
