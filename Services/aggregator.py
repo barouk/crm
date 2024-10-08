@@ -13,6 +13,7 @@ load_dotenv()
 # اتصال به دیتابیس
 db = mysql.connector.connect(
     host=os.getenv("MYSQL"),
+    port=3306,
     user="admin",
     password="111111",
     database="Crm"
