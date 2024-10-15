@@ -27,6 +27,10 @@ Copy code
 docker compose up -d
 This will start the necessary services and launch the project.
 
+Default Admin Account By default, the system creates an admin user with the following credentials:
+Username: admin
+Password: 111111
+
 Features
 The project includes multiple pages such as:
 
