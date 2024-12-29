@@ -1,7 +1,14 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
-  <component name="PublishConfigData" autoUpload="Always" serverName="192.168.140.140" remoteFilesAllowedToDisappearOnAutoupload="false">
+  <component name="PublishConfigData" autoUpload="Always" serverName="171.22.27.58" remoteFilesAllowedToDisappearOnAutoupload="false">
     <serverData>
+      <paths name="171.22.27.58">
+        <serverdata>
+          <mappings>
+            <mapping deploy="/home/crm/crm" local="$PROJECT_DIR$" web="/" />
+          </mappings>
+        </serverdata>
+      </paths>
       <paths name="192.168.140.140">
         <serverdata>
           <mappings>
